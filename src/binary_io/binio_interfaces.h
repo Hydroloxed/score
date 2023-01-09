@@ -7,7 +7,7 @@
 #include <span>
 #include "binary_io.h"
 
-namespace cdc_lib::binary_io::interfaces
+namespace score::binary_io::interfaces
 {
     class output_interface_ostream :
           public output_interface
