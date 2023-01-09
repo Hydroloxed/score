@@ -12,7 +12,7 @@
 #include <string_view>
 #include <type_traits>
 
-namespace cdc_lib::binary_io
+namespace score::binary_io
 {
     namespace detail
     {

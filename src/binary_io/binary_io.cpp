@@ -2,7 +2,7 @@
 #include "binio_interfaces.h"
 
 
-namespace cdc_lib::binary_io
+namespace score::binary_io
 {
     std::unique_ptr< output_interface > create_output_interface( std::ostream& a_stream, std::endian a_endian )
     {
