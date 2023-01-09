@@ -1,5 +1,5 @@
-#ifndef BINIO_INTERFACES_H
-#define BINIO_INTERFACES_H
+#ifndef SCORE_BINIO_INTERFACES_H
+#define SCORE_BINIO_INTERFACES_H
 #include <bit>
 #include <iosfwd>
 #include <istream>
