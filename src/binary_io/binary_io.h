@@ -1,5 +1,5 @@
-#ifndef CDC_LIB_BINARY_IO_BINARY_IO_H
-#define CDC_LIB_BINARY_IO_BINARY_IO_H
+#ifndef SCORE_BINARY_IO_BINARY_IO_H
+#define SCORE_BINARY_IO_BINARY_IO_H
 #include <array>
 #include <algorithm>
 #include <bit>
