@@ -119,7 +119,7 @@ namespace score::binary_io
     template < typename type >
     [[nodiscard]] type read( input_interface& a_interface )
     {
-        type val;
+        type val{};
         read( a_interface, val );
         return val;
     }
