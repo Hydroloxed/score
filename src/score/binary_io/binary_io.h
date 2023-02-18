@@ -100,6 +100,13 @@ namespace score::binary_io
     std::unique_ptr< input_interface > create_input_interface( std::istream& stream,    std::endian endian = std::endian::native );
     std::unique_ptr< input_interface > create_input_interface( std::string_view string, std::endian endian = std::endian::native );
 
+    template < std::uint32_t n_bytes >
+    void skip_bytes( input_interface& a_interface )
+    {
+        std::array< std::byte, n_bytes > data;
+        a_interface.read( data );
+    }
+
     template < std::integral type >
     void read( input_interface& a_interface, type& a_value )
     {
