@@ -27,6 +27,14 @@ namespace score::binary_io
             return std::bit_cast< type >( value_representation );
         }
 
+        template < std::floating_point type >
+        [[nodiscard]] constexpr type byteswap( type a_val ) noexcept
+        {
+            auto value_representation = std::bit_cast< std::array< std::byte, sizeof( type ) > >( a_val );
+            std::ranges::reverse( value_representation );
+            return std::bit_cast< type >( value_representation );
+        }
+
         /**
          * @brief Accesses the underlying bytes of a_val, as if by using std::memcpy twice.
          * @post std::memcmp( &a_val, underlying_bytes( a_val ), sizeof( a_val ) ) == 0
