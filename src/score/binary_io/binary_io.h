@@ -18,7 +18,7 @@ namespace score::binary_io
     {
         // C++20 implementation of std::byteswap
         // see: https://en.cppreference.com/w/cpp/numeric/byteswap
-        template < std::integral type >
+        template < typename type >
         [[nodiscard]] constexpr type byteswap( type a_val ) noexcept
         {
             static_assert( std::has_unique_object_representations_v< type >, "type mustn't have padding bits" );
@@ -107,13 +107,22 @@ namespace score::binary_io
         a_interface.read( data );
     }
 
+    template < std::floating_point type >
+    void read( input_interface& a_interface, type& a_value )
+    {
+        auto dummy_value = type{};
+        auto bytes = detail::underlying_bytes( dummy_value );
+        a_interface.read( bytes );
+        a_value = a_interface.endian() == std::endian::native ? std::bit_cast< type >( bytes ) : detail::byteswap( std::bit_cast< type >( bytes ) );
+    }
+
     template < std::integral type >
     void read( input_interface& a_interface, type& a_value )
     {
-        auto value = a_interface.endian() == std::endian::native ? a_value : detail::byteswap( a_value );
-        auto bytes = detail::underlying_bytes( value );
+        auto dummy_value = type{};
+        auto bytes = detail::underlying_bytes( dummy_value );
         a_interface.read( bytes );
-        a_value = std::bit_cast< type >( bytes );
+        a_value = a_interface.endian() == std::endian::native ? std::bit_cast< type >( bytes ) : detail::byteswap( std::bit_cast< type >( bytes ) );
     }
 
     template < typename type, typename... types >
@@ -126,7 +135,7 @@ namespace score::binary_io
     template < typename type >
     [[nodiscard]] type read( input_interface& a_interface )
     {
-        type val{};
+        type val;
         read( a_interface, val );
         return val;
     }
