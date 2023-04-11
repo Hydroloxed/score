@@ -92,11 +92,11 @@ namespace score::binary_io
         a_interface.write( detail::underlying_bytes( value ) );
     }
 
-    template < typename type, typename... types >
-    void write( output_interface& a_interface, const type& a_value, types... a_values )
+    template < std::floating_point type >
+    void write( output_interface& a_interface, type a_value )
     {
-        write( a_interface, a_value );
-        write( a_interface, a_values... );
+        auto value = a_interface.endian() == std::endian::native ? a_value : detail::byteswap( a_value );
+        a_interface.write( detail::underlying_bytes( value ) );
     }
 
     template < typename type >
@@ -106,7 +106,7 @@ namespace score::binary_io
 
 
     std::unique_ptr< input_interface > create_input_interface( std::istream& stream,    std::endian endian = std::endian::native );
-    std::unique_ptr< input_interface > create_input_interface( std::string_view string, std::endian endian = std::endian::native );
+    std::unique_ptr< input_interface > create_input_interface( std::string_view string, std::size_t start_offset = 0, std::endian endian = std::endian::native );
 
     template < std::uint32_t n_bytes >
     void skip_bytes( input_interface& a_interface )
