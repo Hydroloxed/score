@@ -4,6 +4,7 @@
 #include <cstdlib>
 #include <cstring>
 #include <initializer_list>
+#include <stdexcept>
 
 namespace score
 {
@@ -34,6 +35,18 @@ namespace score
         /**
          * @brief Looks up the value corresponding to @ref a_key "the specified key" in the container.
          * If multiple keys exist, the first one is used.
+         * @throws std::out_of_range Thrown when a value could not be found in the lookup table.
+         */
+        constexpr value_type lookup( key_type a_key ) const
+        {
+            for( const auto& [key, value] : data )
+                if( key == a_key )
+                    return value;
+            throw std::out_of_range{"Value could not be found in simple_lookup_table"};
+        }
+        /**
+         * @brief Looks up the value corresponding to @ref a_key "the specified key" in the container.
+         * If multiple keys exist, the first one is used.
          * If the value could not be found, @ref a_default "the specified default parameter" is returned.
          */
         constexpr value_type lookup_or( key_type a_key, value_type a_default ) const noexcept
@@ -42,6 +55,18 @@ namespace score
                 if( key == a_key )
                     return value;
             return a_default;
+        }
+        /**
+         * @brief Looks up the key corresponding to @ref a_value "the specified value" in the container.
+         * If multiple values exist, the first one is used.
+         * @throws std::out_of_range Thrown when a key could no be found in the lookup table.
+         */
+        constexpr key_type   lookup_key( value_type a_value ) const
+        {
+            for( const auto& [key, value] : data )
+                if( value == a_value )
+                    return key;
+            throw std::out_of_range{"Key could not be found in simple_lookup_table"};
         }
         /**
          * @brief Looks up the key corresponding to @ref a_value "the specified value" in the container.

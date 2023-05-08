@@ -15,11 +15,15 @@ boost::ut::suite< "simple_lookup_table" > slt_suite = []
     };
     test( "lookup" ) = [sample]
     {
+        expect( sample.lookup( 2 ) == 0 );
+        expect( throws( [&sample]{ sample.lookup( 0 ); } ) );
         expect( sample.lookup_or( 2, 0xabc ) == 0 );
         expect( sample.lookup_or( 0, 0xabc ) == 0xabc );
     };
     test( "lookup keys" ) = [sample]
     {
+        expect( sample.lookup_key( 0 ) == 2 );
+        expect( throws( [&sample]{ sample.lookup_key( 1 ); } ) );
         expect( sample.lookup_key_or( 0, 0xabc ) == 2 );
         expect( sample.lookup_key_or( 1, 0xabc ) == 0xabc );
     };
