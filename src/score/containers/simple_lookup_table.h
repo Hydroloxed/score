@@ -1,6 +1,6 @@
 #ifndef SCORE_CONTAINERS_SIMPLE_LOOKUP_TABLE_H
 #define SCORE_CONTAINERS_SIMPLE_LOOKUP_TABLE_H
-#include <array>
+#include <algorithm>
 #include <cstdlib>
 #include <cstring>
 #include <initializer_list>
@@ -29,22 +29,14 @@ namespace score
                        "If you are aware of this, you may disable this error by setting the last template parameter in "
                        "simple_lookup_table to true." );
 
-        std::array< pair_type, size > data;
     public:
-        simple_lookup_table() = delete;
-        simple_lookup_table( const simple_lookup_table& ) = delete;
-        simple_lookup_table& operator=( const simple_lookup_table& ) = delete;
-        template< typename... args_type >
-        constexpr simple_lookup_table( args_type... a_init ) requires( std::conjunction_v< std::is_same< pair_type, args_type>... > ) :
-            data{a_init...}
-        {
-        }
+        pair_type data[size]{};
         /**
          * @brief Looks up the value corresponding to @ref a_key "the specified key" in the container.
          * If multiple keys exist, the first one is used.
          * If the value could not be found, @ref a_default "the specified default parameter" is returned.
          */
-        constexpr value_type lookup_or( key_type a_key, value_type a_default ) const
+        constexpr value_type lookup_or( key_type a_key, value_type a_default ) const noexcept
         {
             for( const auto& [key, value] : data )
                 if( key == a_key )
@@ -56,7 +48,7 @@ namespace score
          * If multiple values exist, the first one is used.
          * If the value could not be found, @ref a_default "the specified default parameter" is returned.
          */
-        constexpr key_type   lookup_key_or( value_type a_value, key_type a_default ) const
+        constexpr key_type   lookup_key_or( value_type a_value, key_type a_default ) const noexcept
         {
             for( const auto& [key, value] : data )
                 if( value == a_value )
