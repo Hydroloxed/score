@@ -1,5 +1,3 @@
-#ifndef TESTS_CONTAINER_CONTAINER_SIMPLE_LOOKUP_TABLE_TESTS_H
-#define TESTS_CONTAINER_CONTAINER_SIMPLE_LOOKUP_TABLE_TESTS_H
 #include <boost/ut.hpp>
 #include <score/containers/simple_lookup_table.h>
 
@@ -28,5 +26,3 @@ boost::ut::suite< "simple_lookup_table" > slt_suite = []
         expect( sample.lookup_key_or( 1, 0xabc ) == 0xabc );
     };
 };
-
-#endif
