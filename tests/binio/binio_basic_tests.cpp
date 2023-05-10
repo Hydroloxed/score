@@ -1,5 +1,3 @@
-#ifndef TESTS_BINIO_BINIO_BASIC_TESTS_H
-#define TESTS_BINIO_BINIO_BASIC_TESTS_H
 #include <algorithm>
 #include <bit>
 #include <boost/ut.hpp>
@@ -144,5 +142,3 @@ boost::ut::suite< "binary_io" > binio_suite = []
         expect( eq( output_interface->tell(), 1_u ) );
     };
 };
-
-#endif
