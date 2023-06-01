@@ -43,9 +43,11 @@ namespace score::binary_io::interfaces
         ~output_interface_string() override = default;
         void write( std::span< const std::byte > a_bytes ) override
         {
+            if( get_actual_offset() + a_bytes.size() >= string.size() )
+                string.resize( offset + a_bytes.size() );
             std::copy_n( a_bytes.data(),
                          a_bytes.size(),
-                         reinterpret_cast< std::byte* >( string.data() + offset ) );
+                         reinterpret_cast< std::byte* >( string.data() + get_actual_offset() ) );
             offset += a_bytes.size();
         }
         [[nodiscard]] std::size_t tell() const noexcept override { return offset; }
@@ -94,7 +96,9 @@ namespace score::binary_io::interfaces
         ~input_interface_string() override = default;
         void read( std::span< std::byte > a_bytes ) override
         {
-            std::copy_n( string.begin() + offset,
+            if( get_actual_offset() + a_bytes.size() >= string.size() )
+                throw std::range_error{"Tried to read too many bytes from string"};
+            std::copy_n( string.begin() + get_actual_offset(),
                          a_bytes.size(),
                          reinterpret_cast< char* >( a_bytes.data() ) );
             offset += a_bytes.size();
