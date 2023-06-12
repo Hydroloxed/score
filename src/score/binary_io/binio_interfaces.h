@@ -96,7 +96,7 @@ namespace score::binary_io::interfaces
         ~input_interface_string() override = default;
         void read( std::span< std::byte > a_bytes ) override
         {
-            if( get_actual_offset() + a_bytes.size() >= string.size() )
+            if( get_actual_offset() + a_bytes.size() > string.size() )
                 throw std::range_error{"Tried to read too many bytes from string"};
             std::copy_n( string.begin() + get_actual_offset(),
                          a_bytes.size(),
