@@ -18,6 +18,7 @@ target_sources( score PRIVATE
 ${CMAKE_CURRENT_SOURCE_DIR}/src/score/binary_io/binary_io.cpp
 ${CMAKE_CURRENT_SOURCE_DIR}/src/score/binary_io/binary_io.h
 ${CMAKE_CURRENT_SOURCE_DIR}/src/score/binary_io/binio_interfaces.h
+${CMAKE_CURRENT_SOURCE_DIR}/src/score/binary_io/binio_strings.h
 ${CMAKE_CURRENT_SOURCE_DIR}/src/score/containers/simple_lookup_table.h
 ${CMAKE_CURRENT_SOURCE_DIR}/src/score/score_utility.h )
 
