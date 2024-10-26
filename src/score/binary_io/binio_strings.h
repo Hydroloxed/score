@@ -17,8 +17,8 @@ namespace score::binary_io
                                    std::string& a_string,
                                    std::size_t a_length )
     {
-        const auto bytes = std::as_writable_bytes( std::span{ a_string.data(), a_length } );
         a_string.resize( a_length );
+        const auto bytes = std::as_writable_bytes( std::span{ a_string.data(), a_length } );
         a_input_interface.read( bytes );
     }
 
