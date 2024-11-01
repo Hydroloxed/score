@@ -1,5 +1,6 @@
 project( score_tests )
 add_executable( score_tests )
+score_enable_strict_warnings( score_tests )
 target_sources( score_tests PRIVATE
     binio/binio_basic_tests.cpp
     binio/binio_string_tests.cpp
