@@ -1,0 +1,7 @@
+function( score_enable_strict_warnings a_target )
+    if( CMAKE_CXX_COMPILER_ID MATCHES "Clang" OR CMAKE_CXX_COMPILER_ID MATCHES "GNU" )
+        target_compile_options( ${a_target} PRIVATE -Wall -Werror -pedantic-errors -Wextra -Wconversion -Wdouble-promotion )
+    elseif(CMAKE_CXX_COMPILER_ID STREQUAL "MSVC")
+        target_compile_options( ${a_target} PRIVATE /W4 /WX )
+    endif()
+endfunction()
