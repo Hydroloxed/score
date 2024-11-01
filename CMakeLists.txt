@@ -5,12 +5,9 @@ project( score )
 add_library( score )
 
 include( cmake/ASan.cmake )
+include( cmake/Warnings.cmake )
 
-if( CMAKE_CXX_COMPILER_ID MATCHES "Clang" )
-    target_compile_options( score PRIVATE -Wall -Werror -pedantic-errors -Wextra )
-elseif( CMAKE_CXX_COMPILER_ID MATCHES "GNU" )
-    target_compile_options( score PRIVATE -Wall -Werror -pedantic-errors -Wextra )
-endif()
+score_enable_strict_warnings( score )
 
 target_include_directories( score PUBLIC src )
 
