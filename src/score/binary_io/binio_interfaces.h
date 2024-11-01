@@ -1,8 +1,10 @@
 #ifndef SCORE_BINIO_INTERFACES_H
 #define SCORE_BINIO_INTERFACES_H
 #include <bit>
+#include <cassert>
 #include <iosfwd>
 #include <istream>
+#include <limits>
 #include <ostream>
 #include <span>
 #include "binary_io.h"
@@ -21,10 +23,11 @@ namespace score::binary_io::interfaces
         ~output_interface_ostream() override = default;
         void write( std::span< const std::byte > a_bytes ) override
         {
+            assert( a_bytes.size() <= std::numeric_limits< std::streamsize >::max() );
             stream.write( reinterpret_cast< const char* >( a_bytes.data() ),
-                          a_bytes.size() );
+                          static_cast< std::streamsize >( a_bytes.size() ) );
         }
-        [[nodiscard]] std::size_t tell() const override { return stream.tellp(); }
+        [[nodiscard]] std::size_t tell() const override { return static_cast< std::size_t >( stream.tellp() - start_offset ); }
     private:
         std::ostream& stream;
         std::ostream::pos_type start_offset;
@@ -71,12 +74,15 @@ namespace score::binary_io::interfaces
         ~input_interface_istream() override = default;
         void read( std::span< std::byte > a_bytes ) override
         {
-            stream.read( reinterpret_cast< char* >( a_bytes.data() ), a_bytes.size() );
+            assert( a_bytes.size() <= std::numeric_limits< std::streamsize >::max() );
+            stream.read( reinterpret_cast< char* >( a_bytes.data() ), 
+                         static_cast< std::streamsize >( a_bytes.size() ) );
         }
-        [[nodiscard]] std::size_t tell() const noexcept override { return stream.tellg(); }
+        [[nodiscard]] std::size_t tell() const noexcept override { return static_cast< std::size_t >( stream.tellg() - start_offset ); }
         void seek( std::size_t a_offset ) override
         {
-            stream.seekg( a_offset + start_offset );
+            assert( a_offset <= std::numeric_limits< std::streamoff >::max() );
+            stream.seekg( static_cast< std::streamoff >( a_offset ) + start_offset );
         }
     private:
         std::istream& stream;
