@@ -29,8 +29,8 @@ namespace score
 
         // return 0xFF...
         if( bit_count == type_bits )
-            return static_cast< type >( -1 );
-        const type bit_mask = (static_cast< type >( 1 ) << bit_count) - static_cast< type >( 1 );
+            return ~type{0};
+        const type bit_mask = type(type{1u} << bit_count) - type{1u};
         return bit_mask << first_bit;
     }
 
