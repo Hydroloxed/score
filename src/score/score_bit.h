@@ -1,6 +1,7 @@
 #ifndef SCORE_SCORE_BIT_H
 #define SCORE_SCORE_BIT_H
 #include <cassert>
+#include <cstdint>
 #include <climits>
 #include <concepts>
 
@@ -24,14 +25,11 @@ namespace score
         constexpr auto type_bits = sizeof( type ) * CHAR_BIT;
         assert( type_bits >= a_bits.first_bit + a_bits.bit_count );
 
-        const type bit_count = static_cast< type >( a_bits.bit_count );
-        const type first_bit = static_cast< type >( a_bits.first_bit );
-
         // return 0xFF...
-        if( bit_count == type_bits )
-            return ~type{0};
-        const type bit_mask = type(type{1u} << bit_count) - type{1u};
-        return bit_mask << first_bit;
+        if( a_bits.bit_count == type_bits )
+            return type(~0u);
+        const std::uintmax_t bit_mask = (1u << a_bits.bit_count) - 1u;
+        return type(bit_mask << a_bits.first_bit);
     }
 
     /**
