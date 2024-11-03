@@ -1,4 +1,4 @@
-cmake_minimum_required( VERSION 3.10 )
+cmake_minimum_required( VERSION 3.21 )
 
 project( score )
 
@@ -22,5 +22,6 @@ ${CMAKE_CURRENT_SOURCE_DIR}/src/score/score_utility.h )
 
 target_compile_features( score PUBLIC cxx_std_20 )
 
-add_subdirectory( ext/ut )
-add_subdirectory( tests )
+if( ${PROJECT_IS_TOP_LEVEL} )
+    add_subdirectory( tests )
+endif()
