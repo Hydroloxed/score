@@ -1,4 +1,11 @@
 project( score_tests )
+
+include( FetchContent )
+
+FetchContent_Declare( ut
+  GIT_REPOSITORY https://github.com/boost-ext/ut.git )
+FetchContent_MakeAvailable( ut )
+
 add_executable( score_tests )
 score_enable_strict_warnings( score_tests )
 target_sources( score_tests PRIVATE
