@@ -83,7 +83,12 @@ namespace score::binary_io
     };
 
     std::unique_ptr< output_interface > create_output_interface( std::ostream& stream, std::endian endian = std::endian::native );
-    std::unique_ptr< output_interface > create_output_interface( std::string& string, std::size_t start_offset = 0, std::endian endian = std::endian::native );
+    std::unique_ptr< output_interface > create_output_interface( std::string& string, std::endian endian = std::endian::native );
+    [[deprecated( "start_offset is no longer supported" )]]
+    inline std::unique_ptr< output_interface > create_output_interface( std::string& string, 
+                                                                 [[maybe_unused]] std::size_t start_offset,
+                                                                 std::endian endian = std::endian::native )
+    { return create_output_interface( string, endian ); }
 
     template < std::integral type >
     void write( output_interface& a_interface, type a_value )
@@ -106,7 +111,12 @@ namespace score::binary_io
 
 
     std::unique_ptr< input_interface > create_input_interface( std::istream& stream,    std::endian endian = std::endian::native );
-    std::unique_ptr< input_interface > create_input_interface( std::string_view string, std::size_t start_offset = 0, std::endian endian = std::endian::native );
+    std::unique_ptr< input_interface > create_input_interface( std::string_view string, std::endian endian = std::endian::native );
+    [[deprecated( "start_offset is no longer supported" )]]
+    inline std::unique_ptr< input_interface > create_input_interface( std::string_view string,
+                                                                      [[maybe_unused]] std::size_t start_offset,
+                                                                      std::endian endian = std::endian::native )
+    { return create_input_interface( string, endian ); }
     std::unique_ptr< input_interface > open_file( std::string_view filename, std::endian endian = std::endian::native );
 
     template < std::uint32_t n_bytes >
