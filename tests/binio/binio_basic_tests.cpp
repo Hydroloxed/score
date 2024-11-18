@@ -16,7 +16,7 @@ boost::ut::suite< "binary_io" > binio_suite = []
     test( "write" ) = []
     {
         std::string output;
-        auto output_interface = score::binary_io::create_output_interface( output, 0, std::endian::little );
+        auto output_interface = score::binary_io::create_output_interface( output, std::endian::little );
 
         write( *output_interface, std::uint8_t{42} );
         write( *output_interface, std::int16_t{-123} );
@@ -30,7 +30,7 @@ boost::ut::suite< "binary_io" > binio_suite = []
 
     test( "read" ) = [input_sample]
     {
-        auto input_interface = score::binary_io::create_input_interface( input_sample, 0, std::endian::little );
+        auto input_interface = score::binary_io::create_input_interface( input_sample, std::endian::little );
 
         const auto u8 = read< std::uint8_t >( *input_interface );
         const auto i16 = read< std::int16_t >( *input_interface );
@@ -43,7 +43,7 @@ boost::ut::suite< "binary_io" > binio_suite = []
 
     test( "skip_bytes" ) = [input_sample]
     {
-        auto input_interface = score::binary_io::create_input_interface( input_sample, 0, std::endian::little );
+        auto input_interface = score::binary_io::create_input_interface( input_sample, std::endian::little );
 
         skip_bytes< 1 >( *input_interface );
 
@@ -56,7 +56,7 @@ boost::ut::suite< "binary_io" > binio_suite = []
     test( "endian" ) = []
     {
         std::string output;
-        auto output_interface = score::binary_io::create_output_interface( output, 0, std::endian::big );
+        auto output_interface = score::binary_io::create_output_interface( output, std::endian::big );
 
         write( *output_interface, std::uint32_t{0xDEADBEEF} );
 
@@ -102,7 +102,7 @@ boost::ut::suite< "binary_io" > binio_suite = []
 
     test( "input_interface_seek" ) = [input_sample]
     {
-        auto input_interface = score::binary_io::create_input_interface( input_sample, 0, std::endian::little );
+        auto input_interface = score::binary_io::create_input_interface( input_sample, std::endian::little );
         auto stream = std::istringstream{input_sample};
         auto stream_interface = score::binary_io::create_input_interface( stream, std::endian::little );
 
