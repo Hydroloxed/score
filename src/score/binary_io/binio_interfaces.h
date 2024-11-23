@@ -2,6 +2,7 @@
 #define SCORE_BINIO_INTERFACES_H
 #include <bit>
 #include <cassert>
+#include <fstream>
 #include <iosfwd>
 #include <istream>
 #include <limits>
@@ -82,6 +83,31 @@ namespace score::binary_io::interfaces
     private:
         std::istream& stream;
         std::istream::pos_type start_offset;
+    };
+
+    class input_interface_file :
+          public input_interface
+    {
+    public:
+        input_interface_file( std::ifstream&& a_file, std::endian a_endian ) :
+            input_interface( a_endian ),
+            file( std::move( a_file ) )
+        {}
+        ~input_interface_file() override;
+        void read( std::span< std::byte > a_bytes ) override
+        {
+            assert( a_bytes.size() <= std::numeric_limits< std::streamsize >::max() );
+            file.read( reinterpret_cast< char* >( a_bytes.data() ), static_cast< std::streamsize >( a_bytes.size() ) );
+        }
+        [[nodiscard]] std::size_t tell() const noexcept override { return static_cast< std::size_t >( file.tellg() ); }
+        void seek( std::size_t a_offset ) override
+        {
+            assert( a_offset <= std::numeric_limits< std::streamoff >::max() );
+            file.seekg( static_cast< std::streamoff >( a_offset ) );
+        }
+    private:
+        // mutable because tellg is not const...
+        mutable std::ifstream file;
     };
 
     class input_interface_string :

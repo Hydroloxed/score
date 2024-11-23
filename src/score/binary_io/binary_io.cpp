@@ -32,6 +32,6 @@ namespace score::binary_io
             throw std::runtime_error{"Could not open file " + std::string{a_filename}};
 
         stream.exceptions( std::ios::badbit | std::ios::eofbit | std::ios::failbit );
-        return create_input_interface( stream, a_endian );
+        return std::make_unique< interfaces::input_interface_file >( std::move( stream ), a_endian );
     }
 }
