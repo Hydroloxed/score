@@ -93,7 +93,7 @@ namespace score::binary_io::interfaces
             input_interface( a_endian ),
             file( std::move( a_file ) )
         {}
-        ~input_interface_file() override;
+        ~input_interface_file() override = default;
         void read( std::span< std::byte > a_bytes ) override
         {
             assert( a_bytes.size() <= std::numeric_limits< std::streamsize >::max() );
