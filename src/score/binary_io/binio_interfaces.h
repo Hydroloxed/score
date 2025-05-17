@@ -124,7 +124,7 @@ namespace score::binary_io::interfaces
         {
             if( offset + a_bytes.size() > string.size() )
                 throw std::range_error{"Tried to read too many bytes from string"};
-            std::copy_n( string.begin() + offset,
+            std::copy_n( string.begin() + static_cast< std::ptrdiff_t >( offset ),
                          a_bytes.size(),
                          reinterpret_cast< char* >( a_bytes.data() ) );
             offset += a_bytes.size();
