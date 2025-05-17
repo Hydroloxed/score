@@ -35,8 +35,8 @@ namespace score
         using const_reference = const value_type&;
         using pointer = value_type*;
         using const_pointer = const value_type*;
-        using iterator = array_type::iterator;
-        using const_iterator = array_type::const_iterator;
+        using iterator = pair_type*;
+        using const_iterator = const pair_type*;
 
         static_assert( table_size <= 250 || disable_size_nag,
                        "You have exceeded the maximum size of this container. Runtime performance will suffer as a result."
