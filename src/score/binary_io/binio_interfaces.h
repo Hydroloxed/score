@@ -1,5 +1,5 @@
-#ifndef SCORE_BINIO_INTERFACES_H
-#define SCORE_BINIO_INTERFACES_H
+#ifndef SCORE_BINARY_IO_BINIO_INTERFACES_H
+#define SCORE_BINARY_IO_BINIO_INTERFACES_H
 #include <bit>
 #include <cassert>
 #include <fstream>
