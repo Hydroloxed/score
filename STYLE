@@ -1,0 +1,28 @@
+                                CODING STYLE
+
+COMMITS
+    Commits should adhere to the following format:
+        [module #12345] <Commit message>
+    The module should refer to the name of the affected top-level module. Or, if
+    it affects the whole project (think CMake changes, new dependencies, etc.),
+    it should be "[project #12345]"
+
+    The issue number is optional, and must be preceded by "I " if it is a
+    private issue.
+
+    Example commit names:
+        GOOD: [binary_io] Fix something
+        BAD:  [bit] Do something
+        BAD:  [binio_interfaces] Add a thingamabob
+               ^ Not a top-level module!
+        BAD:  [bit]: Do something
+                   ^ Shouldn't have a colon!
+        GOOD: [binary_io #5] Fix something
+                         ^ Refers to GitHub issue #5
+        BAD:  [binary_io#12]
+                        ^ Won't show up as a link in the GitHub web interface!
+        GOOD: [binary_io I #1] Fix some issue
+                           ^ Refers to Intra (private) issue #1
+        BAD:  [binary_io I#3] Fix some other issue
+                          ^ Won't show up as a link because of the missing space
+

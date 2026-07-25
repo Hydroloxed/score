@@ -1,0 +1,25 @@
+                                    SCORE
+
+score is a collection of C++ utilities used in some of my other projects,
+primarily cdc_lib. The big thing of note is the binary_io library, providing a
+set of helpers to read and write any binary file format.
+
+BUILDING
+    You'll need:
+      - C++20-compatible compiler
+      - CMake
+      - Git
+
+    Run the following commands in your shell of choice:
+        git clone https://github.com/Hydroloxed/score.git
+        cd score
+        mkdir build
+        cd build
+        cmake ..
+        cmake --build . --parallel
+    
+    To run the tests:
+        build/tests/score_tests
+
+CODING STYLE
+    See STYLE.
