@@ -53,8 +53,8 @@ namespace score
         [[nodiscard]] constexpr const_iterator begin() const noexcept { return data.data(); }
         [[nodiscard]] constexpr iterator       end() noexcept { return data.data() + data.size(); }
         [[nodiscard]] constexpr const_iterator end() const noexcept { return data.data() + data.size(); }
-        [[nodiscard]] constexpr const_iterator cbegin() const noexcept { return data.data() + data.size(); }
-        [[nodiscard]] constexpr const_iterator cend() const noexcept { return data.data() + data.size(); }
+        [[nodiscard]] constexpr const_iterator cbegin() const noexcept { return begin(); }
+        [[nodiscard]] constexpr const_iterator cend() const noexcept { return end(); }
         [[nodiscard]] constexpr iterator find( const key_type& value )
         {
             for( auto& it : *this )
