@@ -54,10 +54,33 @@ namespace score::binary_io
     {
     public:
         virtual ~input_interface() = default;
+
+        /**
+         * @brief Read @p out_bytes.size() bytes into @p out_bytes
+         *
+         * Implementations are free to throw *any exception* on error!
+         * 
+         * @param out_bytes The destination bytes. Implementations are not
+         *                  required to change this on error.
+         */
         virtual void read( std::span< std::byte > out_bytes ) = 0;
+
+        //! @brief Return the current stream offset from start
         [[nodiscard]] virtual std::size_t tell() const = 0;
+
+        /**
+         * @brief Seek to position @p offset from the start of the stream.
+         *
+         * Implementations are free to throw *any exception* on error!
+         *
+         * @post tell() == offset
+         */
         virtual void seek( std::size_t offset ) = 0;
+
+        //! @brief Return the stream's endianness
         [[nodiscard]] constexpr std::endian endian() const noexcept { return endian_; }
+
+        //! @brief Set the stream's endianness to @p a_endian
         void set_endian( std::endian a_endian ) { endian_ = a_endian; }
     protected:
         input_interface( std::endian a_endian ) :
@@ -71,9 +94,21 @@ namespace score::binary_io
     {
     public:
         virtual ~output_interface() = default;
+
+        /**
+         * @brief Write @p bytes to the stream
+         *
+         * Implementations are free to throw *any exception* on error!
+         */
         virtual void write( std::span< const std::byte > bytes ) = 0;
+
+        //! @brief Return the current stream offset from start
         [[nodiscard]] virtual std::size_t tell() const = 0;
+
+        //! @brief Return the stream's endianness
         [[nodiscard]] constexpr std::endian endian() const noexcept { return endian_; }
+
+        //! @brief Set the stream's endianness to @p a_endian
         void set_endian( std::endian a_endian ) { endian_ = a_endian; }
     protected:
         output_interface( std::endian a_endian ) :
@@ -83,14 +118,32 @@ namespace score::binary_io
         std::endian endian_;
     };
 
+    /**
+     * @brief Create an output interface that writes to @p stream with endianness
+     *        @p endian
+     * 
+     * @param stream The `std::ostream` to write to. Must remain alive for as
+                     long as the output interface is used.
+     */
     std::unique_ptr< output_interface > create_output_interface( std::ostream& stream, std::endian endian = std::endian::native );
+
+    /**
+     * @brief Create an output interface that writes to @p string with endianenss
+     *        @p endian
+     * 
+     * @param string The string to write to. Must remain alive for as long as
+     *               the output interface is used.
+     */
     std::unique_ptr< output_interface > create_output_interface( std::string& string, std::endian endian = std::endian::native );
+
     [[deprecated( "start_offset is no longer supported" )]]
     inline std::unique_ptr< output_interface > create_output_interface( std::string& string, 
                                                                  [[maybe_unused]] std::size_t start_offset,
                                                                  std::endian endian = std::endian::native )
     { return create_output_interface( string, endian ); }
 
+    //! Write integer value @p a_value to @p a_interface
+    //! Will use the endianness of @p a_interface
     template < std::integral type >
     void write( output_interface& a_interface, type a_value )
     {
@@ -98,6 +151,8 @@ namespace score::binary_io
         a_interface.write( detail::underlying_bytes( value ) );
     }
 
+    //! Write floating-point value @p a_value to @p a_interface
+    //! Will use the endianness of @p a_interface
     template < std::floating_point type >
     void write( output_interface& a_interface, type a_value )
     {
@@ -111,15 +166,45 @@ namespace score::binary_io
     {}
 
 
+    /**
+     * @brief Create an input interface that reads from a @p stream with
+     *        endiannness @p endian
+     * 
+     * @param stream The `std::istream` to use. Must remain alive for as long as
+     *               the input interface is used.
+     */
     std::unique_ptr< input_interface > create_input_interface( std::istream& stream,    std::endian endian = std::endian::native );
+
+    /**
+     * @brief Create an input interface that reads from @p string with endianness
+     *        @p endian
+     * 
+     * @param string String to read from. The pointed-to data must remain alive
+     *               for as long as the input interface is used.
+     */
     std::unique_ptr< input_interface > create_input_interface( std::string_view string, std::endian endian = std::endian::native );
+
     [[deprecated( "start_offset is no longer supported" )]]
     inline std::unique_ptr< input_interface > create_input_interface( std::string_view string,
                                                                       [[maybe_unused]] std::size_t start_offset,
                                                                       std::endian endian = std::endian::native )
     { return create_input_interface( string, endian ); }
+
+    /**
+     * @brief Open a stream that reads from the file @p filename with endianess
+     *        @p endian
+     *
+     * @throw std::runtime_error If file couldn't be opened
+     */
     std::unique_ptr< input_interface > open_file( const std::string& filename, std::endian endian = std::endian::native );
 
+    /**
+     * @brief Skip ahead @p n_bytes in the stream @p a_interface
+     *
+     * This is made to be used with streams for which `seek()` isn't
+     * implemented. So we instead use a workaround with *reading* and throwing
+     * away the results.
+     */
     template < std::uint32_t n_bytes >
     void skip_bytes( input_interface& a_interface )
     {
@@ -127,6 +212,8 @@ namespace score::binary_io
         a_interface.read( data );
     }
 
+    //! @brief Read floating-point type into @p a_value from @p a_interface
+    //! Will read with the endianness from @p a_interface
     template < std::floating_point type >
     void read( input_interface& a_interface, type& a_value )
     {
@@ -136,6 +223,8 @@ namespace score::binary_io
         a_value = a_interface.endian() == std::endian::native ? std::bit_cast< type >( bytes ) : detail::byteswap( std::bit_cast< type >( bytes ) );
     }
 
+    //! @brief Read integer type into @p a_value from @p a_interface
+    //! Will read with the endianness from @p a_interface
     template < std::integral type >
     void read( input_interface& a_interface, type& a_value )
     {
@@ -152,6 +241,10 @@ namespace score::binary_io
         read( a_interface, a_values... );
     }
 
+    /**
+     * @brief Convenience helper to read with the `read<type>(i)` syntax. Works
+     *        with any type for which `read(i, var_with_type)` work for.
+     */
     template < typename type >
     [[nodiscard]] type read( input_interface& a_interface )
     {
