@@ -19,7 +19,12 @@ jobs:
         compiler: [{c: gcc, cpp: g++}, {c: clang, cpp: clang++}]
     steps:
       - name: Install deps
-        run: apt-get update -qq && apt-get install -qq --yes cmake gcc lcov
+        run: apt-get update -qq && apt-get install -qq --yes cmake
+      - name: Install lcov
+        run: apt-get install -qq --yes lcov
+        if: ${{matrix.build_type == 'Debug' && matrix.compiler.c == 'gcc'}}
+      - name: Install compiler
+        run: apt-get install -qq --yes ${{matrix.compiler.c}}
       - name: Checkout
         uses: actions/checkout@v6
       - name: Debug
