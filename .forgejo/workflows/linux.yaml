@@ -32,20 +32,20 @@ jobs:
         run: ${{forgejo.workspace}}/build/tests/score_tests
       - name: Generate coverage.info
         run: lcov --directory ${{forgejo.workspace}}/build --capture --output ${{forgejo.workspace}}/build/coverage.info --include "*/src/score/*"
-        if: ${{matrix.build_type == 'Debug'}}
+        if: ${{matrix.build_type == 'Debug' && matrix.compiler.c == 'gcc'}}
       - name: Generate HTML coverage pages
         run: genhtml ${{forgejo.workspace}}/build/coverage.info -o ${{forgejo.workspace}}/build/gen_coverage
-        if: ${{matrix.build_type == 'Debug'}}
+        if: ${{matrix.build_type == 'Debug' && matrix.compiler.c == 'gcc'}}
       - name: Upload coverage data
         uses: actions/git-pages@v2
-        if: ${{matrix.build_type == 'Debug'}}
+        if: ${{matrix.build_type == 'Debug' && matrix.compiler.c == 'gcc'}}
         with:
           site: http://pages.intra.hydrolox.me/score_coverage/
           server: pages.intra.hydrolox.me
           password: ${{ secrets.GIT_PAGES_TOKEN }}
           source: ${{forgejo.workspace}}/build/gen_coverage
       - uses: actions/upload-artifact@v3
-        if: ${{matrix.build_type == 'Debug'}}
+        if: ${{matrix.build_type == 'Debug' && matrix.compiler.c == 'gcc'}}
         with:
           name: coverage
           path: ${{forgejo.workspace}}/build/gen_coverage
