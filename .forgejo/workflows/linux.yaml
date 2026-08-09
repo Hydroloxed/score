@@ -16,13 +16,16 @@ jobs:
     strategy:
       matrix:
         build_type: ['Release', 'Debug']
+        compiler: [{c: gcc, cpp: g++}, {c: clang, cpp: clang++}]
     steps:
       - name: Install deps
         run: apt-get update -qq && apt-get install -qq --yes cmake gcc lcov
       - name: Checkout
         uses: actions/checkout@v6
+      - name: Debug
+        run: echo ${{matrix.compiler.c}} ${{matrix.compiler.cpp}}
       - name: Configure
-        run: CXXFLAGS="${CXX_FLAGS} -coverage" LDFLAGS="${LDFLAGS} -coverage" cmake -B ${{forgejo.workspace}}/build -DCMAKE_BUILD_TYPE=${{matrix.build_type}}
+        run: CC="${{matrix.compiler.c}}" CXX="${{matrix.compiler.cpp}}" CXXFLAGS="${CXX_FLAGS} -coverage" LDFLAGS="${LDFLAGS} -coverage" cmake -B ${{forgejo.workspace}}/build -DCMAKE_BUILD_TYPE=${{matrix.build_type}}
       - name: Build
         run: cmake --build ${{forgejo.workspace}}/build --config ${{matrix.build_type}} --parallel ${{env.NUM_JOBS}}
       - name: Run tests
