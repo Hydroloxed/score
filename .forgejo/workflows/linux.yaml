@@ -1,0 +1,56 @@
+name: build-linux
+
+# some stuff stolen from:
+# https://github.com/actions/starter-workflows/blob/main/ci/cmake-single-platform.yml
+on:
+  push:
+  schedule:
+    - cron: '0 18 * * *'
+
+env:
+  NUM_JOBS: 4
+
+jobs:
+  build-n-test-linux:
+    runs-on: debian
+    strategy:
+      matrix:
+        build_type: ['Release', 'Debug']
+        compiler: [{c: gcc, cpp: g++}, {c: clang, cpp: clang++}]
+    steps:
+      - name: Install deps
+        run: apt-get update -qq && apt-get install -qq --yes cmake
+      - name: Install lcov
+        run: apt-get install -qq --yes lcov
+        if: ${{matrix.build_type == 'Debug' && matrix.compiler.c == 'gcc'}}
+      - name: Install compiler
+        run: apt-get install -qq --yes ${{matrix.compiler.c}}
+      - name: Checkout
+        uses: actions/checkout@v6
+      - name: Debug
+        run: echo ${{matrix.compiler.c}} ${{matrix.compiler.cpp}}
+      - name: Configure
+        run: CC="${{matrix.compiler.c}}" CXX="${{matrix.compiler.cpp}}" CXXFLAGS="${CXX_FLAGS} -coverage" LDFLAGS="${LDFLAGS} -coverage" cmake -B ${{forgejo.workspace}}/build -DCMAKE_BUILD_TYPE=${{matrix.build_type}}
+      - name: Build
+        run: cmake --build ${{forgejo.workspace}}/build --config ${{matrix.build_type}} --parallel ${{env.NUM_JOBS}}
+      - name: Run tests
+        run: ${{forgejo.workspace}}/build/tests/score_tests
+      - name: Generate coverage.info
+        run: lcov --directory ${{forgejo.workspace}}/build --capture --output ${{forgejo.workspace}}/build/coverage.info --include "*/src/score/*"
+        if: ${{matrix.build_type == 'Debug' && matrix.compiler.c == 'gcc'}}
+      - name: Generate HTML coverage pages
+        run: genhtml ${{forgejo.workspace}}/build/coverage.info -o ${{forgejo.workspace}}/build/gen_coverage
+        if: ${{matrix.build_type == 'Debug' && matrix.compiler.c == 'gcc'}}
+      - name: Upload coverage data
+        uses: actions/git-pages@v2
+        if: ${{matrix.build_type == 'Debug' && matrix.compiler.c == 'gcc'}}
+        with:
+          site: http://pages.intra.hydrolox.me/score_coverage/
+          server: pages.intra.hydrolox.me
+          password: ${{ secrets.GIT_PAGES_TOKEN }}
+          source: ${{forgejo.workspace}}/build/gen_coverage
+      - uses: actions/upload-artifact@v3
+        if: ${{matrix.build_type == 'Debug' && matrix.compiler.c == 'gcc'}}
+        with:
+          name: coverage
+          path: ${{forgejo.workspace}}/build/gen_coverage
