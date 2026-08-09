@@ -1,5 +1,5 @@
+#include <algorithm>
 #include <boost/ut.hpp>
-#include <ranges>
 #include <score/containers/simple_lookup_table.h>
 
 boost::ut::suite< "simple_lookup_table" > slt_suite = []
@@ -57,6 +57,27 @@ boost::ut::suite< "simple_lookup_table" > slt_suite = []
         expect( eq( sample.find( 3 ), sample.begin() + 2 ) );
         expect( eq( sample.find( 4 ), sample.begin() + 3 ) );
         expect( eq( sample.find( 0 ), sample.end() ) );
+    };
+    test( "const find" ) = [sample = std::as_const(sample)]
+    {
+        expect( eq( sample.find( 2 ), sample.begin() ) );
+        expect( eq( sample.find( 3 ), sample.begin() + 2 ) );
+        expect( eq( sample.find( 4 ), sample.begin() + 3 ) );
+        expect( eq( sample.find( 0 ), sample.end() ) );
+    };
+    test( "begin should point to the first element" ) = [sample, csample = std::as_const(sample)]
+    {
+        expect( eq( sample.begin(), sample.data.data() ) );
+        expect( eq( sample.cbegin(), sample.data.data() ) );
+        expect( eq( csample.begin(), csample.data.data() ) );
+        expect( eq( csample.cbegin(), csample.data.data() ) );
+    };
+    test( "end should point to one past the last element" ) = [sample, csample = std::as_const(sample)]
+    {
+        expect( eq( sample.end(), sample.data.data() + sample.data.size() ) );
+        expect( eq( sample.cend(), sample.data.data() + sample.data.size() ) );
+        expect( eq( csample.end(), csample.data.data() + csample.data.size() ) );
+        expect( eq( csample.cend(), csample.data.data() + csample.data.size() ) );
     };
     test( "make_lookup_table gives the same table" ) = [sample, sample2]
     {
