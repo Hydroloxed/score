@@ -29,8 +29,8 @@ namespace score
         using pair_type = std::pair< key_type, value_type >;
         using array_type = std::array< pair_type, table_size >;
 
-        using size_type = array_type::size_type;
-        using difference_type = array_type::difference_type;
+        using size_type = typename array_type::size_type;
+        using difference_type = typename array_type::difference_type;
         using reference = value_type&;
         using const_reference = const value_type&;
         using pointer = value_type*;
