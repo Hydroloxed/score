@@ -118,7 +118,7 @@ namespace score::binary_io
                                                                       [[maybe_unused]] std::size_t start_offset,
                                                                       std::endian endian = std::endian::native )
     { return create_input_interface( string, endian ); }
-    std::unique_ptr< input_interface > open_file( std::string_view filename, std::endian endian = std::endian::native );
+    std::unique_ptr< input_interface > open_file( const std::string& filename, std::endian endian = std::endian::native );
 
     template < std::uint32_t n_bytes >
     void skip_bytes( input_interface& a_interface )

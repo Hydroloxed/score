@@ -25,9 +25,9 @@ namespace score::binary_io
         return std::make_unique< interfaces::input_interface_string >( a_str, a_endian );
     }
 
-    std::unique_ptr< input_interface > open_file( std::string_view a_filename, std::endian a_endian )
+    std::unique_ptr< input_interface > open_file( const std::string& a_filename, std::endian a_endian )
     {
-        std::ifstream stream{a_filename.data(), std::ios::in | std::ios::binary};
+        std::ifstream stream{a_filename, std::ios::in | std::ios::binary};
         if( !stream.good() )
             throw std::runtime_error{"Could not open file " + std::string{a_filename}};
 
