@@ -8,6 +8,7 @@
 #include <limits>
 #include <ostream>
 #include <span>
+#include <stdexcept>
 #include "binary_io.h"
 
 namespace score::binary_io::interfaces
@@ -130,7 +131,12 @@ namespace score::binary_io::interfaces
             offset += a_bytes.size();
         }
         [[nodiscard]] std::size_t tell() const noexcept override { return offset; }
-        void seek( std::size_t a_offset ) override { offset = a_offset; }
+        void seek( std::size_t a_offset ) override
+        {
+            if( a_offset >= string.size() )
+                throw std::invalid_argument{"seek(): offset is out of range"};
+            offset = a_offset;
+        }
     private:
 
         std::string_view string;

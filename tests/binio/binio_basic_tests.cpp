@@ -141,4 +141,18 @@ boost::ut::suite< "binary_io" > binio_suite = []
 
         expect( eq( output_interface->tell(), 1_u ) );
     };
+
+    test( "string interface: can't seek beyond end of string" ) = [input_sample]
+    {
+        auto input_interface = score::binary_io::create_input_interface( "\1\2\3\4" );
+
+        expect( throws( [&]{ input_interface->seek( 5 ); } ) );
+    };
+
+    test( "string interface: can't seek to end of string" ) = [input_sample]
+    {
+        auto input_interface = score::binary_io::create_input_interface( "\1\2\3\4" );
+
+        expect( throws( [&]{ input_interface->seek( 4 ); } ) );
+    };
 };
