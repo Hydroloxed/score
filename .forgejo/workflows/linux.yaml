@@ -30,7 +30,7 @@ jobs:
       - name: Debug
         run: echo ${{matrix.compiler.c}} ${{matrix.compiler.cpp}}
       - name: Configure
-        run: CC="${{matrix.compiler.c}}" CXX="${{matrix.compiler.cpp}}" CXXFLAGS="${CXX_FLAGS} -coverage" LDFLAGS="${LDFLAGS} -coverage" cmake -B ${{forgejo.workspace}}/build -DCMAKE_BUILD_TYPE=${{matrix.build_type}}
+        run: CC="${{matrix.compiler.c}}" CXX="${{matrix.compiler.cpp}}" CXXFLAGS="${CXXFLAGS} -coverage" LDFLAGS="${LDFLAGS} -coverage" cmake -B ${{forgejo.workspace}}/build -DCMAKE_BUILD_TYPE=${{matrix.build_type}}
       - name: Build
         run: cmake --build ${{forgejo.workspace}}/build --config ${{matrix.build_type}} --parallel ${{env.NUM_JOBS}}
       - name: Run tests
