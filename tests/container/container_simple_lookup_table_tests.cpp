@@ -1,10 +1,9 @@
 #include <algorithm>
-#include <boost/ut.hpp>
+#include <catch2/catch_test_macros.hpp>
 #include <score/containers/simple_lookup_table.h>
 
-boost::ut::suite< "simple_lookup_table" > slt_suite = []
+TEST_CASE( "simple_lookup_table", "[containers]" )
 {
-    using namespace boost::ut;
     score::simple_lookup_table< int, int, 4 > sample =
     {
         std::pair{2, 0},
@@ -19,68 +18,77 @@ boost::ut::suite< "simple_lookup_table" > slt_suite = []
         std::pair{3, 0},
         std::pair{4, 2}
     );
-    test( "lookup" ) = [sample]
+    SECTION( "lookup" )
     {
-        expect( eq( sample.lookup( 2 ), 0 ) );
-        expect( eq( sample.lookup_or( 2, 0xabc ), 0 ) );
-        expect( eq( sample.lookup_or( 0, 0xabc ), 0xabc ) );
-        expect( throws( [&sample]{ sample.lookup( 0 ); } ) );
+        CHECK( sample.lookup( 2 ) == 0 );
+        CHECK( sample.lookup_or( 2, 0xabc ) == 0 );
+        CHECK( sample.lookup_or( 0, 0xabc ) == 0xabc );
+        CHECK_THROWS( sample.lookup( 0 ) );
     };
-    test( "lookup keys" ) = [sample]
+    SECTION( "lookup keys" )
     {
-        expect( eq( sample.lookup_key( 0 ), 2 ) );
-        expect( eq( sample.lookup_key_or( 0, 0xabc ), 2 ) );
-        expect( eq( sample.lookup_key_or( 1, 0xabc ), 0xabc ) );
-        expect( throws( [&sample]{ sample.lookup_key( 1 ); } ) );
+        CHECK( sample.lookup_key( 0 ) == 2 );
+        CHECK( sample.lookup_key_or( 0, 0xabc ) == 2 );
+        CHECK( sample.lookup_key_or( 1, 0xabc ) == 0xabc );
+        CHECK_THROWS( sample.lookup_key( 1 ) );
     };
-    test( "size" ) = [sample]
+    SECTION( "size" )
     {
-        expect( eq( sample.size(), 4u ) );
-        expect( eq( sample.max_size(), 4u ) );
-        expect( eq( sample.empty(), false ) );
+        CHECK( sample.size() == 4u );
+        CHECK( sample.max_size() == 4u );
+        CHECK( sample.empty() == false );
     };
-    test( "at" ) = [sample]
+    SECTION( "at" )
     {
-        expect( eq( sample.at( 2 ), 0 ) );
-        expect( eq( sample.at( 3 ), 0 ) );
-        expect( eq( sample.at( 4 ), 2 ) );
-        expect( throws( [&sample]{ (void)sample.at( 0 ); } ) );
+        CHECK( sample.at( 2 ) == 0 );
+        CHECK( sample.at( 3 ) == 0 );
+        CHECK( sample.at( 4 ) == 2 );
+        CHECK_THROWS( (void)sample.at( 0 ) );
     };
-    test( "contains" ) = [sample]
+    SECTION( "contains" )
     {
-        expect( sample.contains( 2 ) );
-        expect( sample.contains( 3 ) );
+        CHECK( sample.contains( 2 ) );
+        CHECK( sample.contains( 3 ) );
     };
-    test( "find" ) = [sample]
+    SECTION( "find" )
     {
-        expect( eq( sample.find( 2 ), sample.begin() ) );
-        expect( eq( sample.find( 3 ), sample.begin() + 2 ) );
-        expect( eq( sample.find( 4 ), sample.begin() + 3 ) );
-        expect( eq( sample.find( 0 ), sample.end() ) );
+        CHECK( sample.find( 2 ) == sample.begin() );
+        CHECK( sample.find( 3 ) == sample.begin() + 2 );
+        CHECK( sample.find( 4 ) == sample.begin() + 3 );
+        CHECK( sample.find( 0 ) == sample.end() );
     };
-    test( "const find" ) = [sample = std::as_const(sample)]
+    SECTION( "const find" )
     {
-        expect( eq( sample.find( 2 ), sample.begin() ) );
-        expect( eq( sample.find( 3 ), sample.begin() + 2 ) );
-        expect( eq( sample.find( 4 ), sample.begin() + 3 ) );
-        expect( eq( sample.find( 0 ), sample.end() ) );
+        [sample = std::as_const(sample)]
+        {
+            CHECK( sample.find( 2 ) == sample.begin() );
+            CHECK( sample.find( 3 ) == sample.begin() + 2 );
+            CHECK( sample.find( 4 ) == sample.begin() + 3 );
+            CHECK( sample.find( 0 ) == sample.end() );
+        }();
     };
-    test( "begin should point to the first element" ) = [sample, csample = std::as_const(sample)]
+    SECTION( "begin should point to the first element" )
     {
-        expect( eq( sample.begin(), sample.data.data() ) );
-        expect( eq( sample.cbegin(), sample.data.data() ) );
-        expect( eq( csample.begin(), csample.data.data() ) );
-        expect( eq( csample.cbegin(), csample.data.data() ) );
+        [sample, csample = std::as_const(sample)]
+        {
+            CHECK( sample.begin() == sample.data.data() );
+            CHECK( sample.cbegin() == sample.data.data() );
+            CHECK( csample.begin() == csample.data.data() );
+            CHECK( csample.cbegin() == csample.data.data() );
+        }();
     };
-    test( "end should point to one past the last element" ) = [sample, csample = std::as_const(sample)]
+    SECTION( "end should point to one past the last element" )
     {
-        expect( eq( sample.end(), sample.data.data() + sample.data.size() ) );
-        expect( eq( sample.cend(), sample.data.data() + sample.data.size() ) );
-        expect( eq( csample.end(), csample.data.data() + csample.data.size() ) );
-        expect( eq( csample.cend(), csample.data.data() + csample.data.size() ) );
+        [sample, csample = std::as_const(sample)]
+        {
+            CHECK( sample.end() == sample.data.data() + sample.data.size() );
+            CHECK( sample.cend() == sample.data.data() + sample.data.size() );
+            CHECK( csample.end() == csample.data.data() + csample.data.size() );
+            CHECK( csample.cend() == csample.data.data() + csample.data.size() );
+        }();
     };
-    test( "make_lookup_table gives the same table" ) = [sample, sample2]
+    SECTION( "make_lookup_table gives the same table" )
     {
-        expect( std::ranges::equal( sample, sample2 ) );
+        CHECK( std::ranges::equal( sample, sample2 ) );
     };
 };
